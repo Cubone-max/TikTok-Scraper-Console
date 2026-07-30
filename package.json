@@ -1,0 +1,36 @@
+{
+  "name": "tiktok-scraper-console",
+  "version": "0.1.0",
+  "description": "TikTok account data scraper powered by Playwright headless browser and optional proxies.",
+  "type": "module",
+  "bin": {
+    "tiktok-scraper-console": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "scrape": "tsx src/cli.ts",
+    "web": "tsx src/server.ts",
+    "web:dist": "node dist/server.js",
+    "start": "node dist/cli.js"
+  },
+  "keywords": [
+    "tiktok",
+    "scraper",
+    "playwright",
+    "proxy"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "playwright": "^1.49.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

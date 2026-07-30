@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TikTok Scraper Console</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" data-i18n="eyebrow">TikTok Scraper</p>
+          <h1 data-i18n="title">TikTok Scraping and Download Console</h1>
+          <p class="intro" data-i18n="intro">Set the connection method first, then choose profile scrape, single video download, or batch video download. Each task module applies its selected download options to every video in that task.</p>
+        </div>
+        <div class="lang-switch" aria-label="Language">
+          <button class="seg active" type="button" data-lang="en">EN</button>
+          <button class="seg" type="button" data-lang="zh">繁中</button>
+        </div>
+      </header>
+
+      <section class="notice">
+        <span class="status-dot"></span>
+        <span data-i18n="notice">Only scrape public content you own or are authorized to use. Video source URLs expire, so local download is recommended.</span>
+      </section>
+
+      <form id="connectionForm" class="panel connection-panel">
+        <div class="section-head">
+          <div>
+            <h2 data-i18n="connectionTitle">Global Connection</h2>
+            <p data-i18n="connectionSub">Local direct mode or IPCook proxy mode applies to every task below.</p>
+          </div>
+          <button id="checkIp" type="button" class="ghost" data-i18n="checkIp">Check IP</button>
+        </div>
+        <div class="grid two">
+          <fieldset class="group">
+            <legend data-i18n="networkMode">Network mode</legend>
+            <label><input type="radio" name="proxyMode" value="local" checked /> <span data-i18n="localMode">Local direct download</span></label>
+            <label><input type="radio" name="proxyMode" value="ipcookApi" /> <span data-i18n="ipcookApiMode">Use IPCook API (Recommended)</span></label>
+            <label><input type="radio" name="proxyMode" value="ipcookProxy" /> <span data-i18n="ipcookProxyMode">Use IPCook proxy</span></label>
+          </fieldset>
+
+          <label class="field ipcook-field">
+            <span>
+              <span data-i18n="ipcookUrl">IPCook API link (Only used in IPCook API mode)</span>
+              <a href="https://www.ipcook.com/?ref=IKGXS6" target="_blank" rel="noreferrer" data-i18n="ipcookLink">Get API link (Free Trial)</a>
+            </span>
+            <input name="ipcookProxyUrl" type="url" placeholder="https://www.ipcook.com/api/dynamic/genips?..." data-i18n-placeholder="ipcookPlaceholder" disabled />
+          </label>
+        </div>
+        <label class="field proxy-list-field">
+          <span data-i18n="proxyList">IPCook proxy list</span>
+          <textarea name="proxyList" placeholder="HOST:PORT:USER:PASS&#10;HOST:PORT@USER:PASS&#10;USER:PASS:HOST:PORT&#10;USER:PASS@HOST:PORT" data-i18n-placeholder="proxyListPlaceholder" disabled></textarea>
+        </label>
+        <div class="ip-status" id="ipStatus" data-i18n="ipIdle">ip: not checked --</div>
+      </form>
+
+      <form id="profileForm" class="panel">
+        <div class="section-head">
+          <div>
+            <h2 data-i18n="profileTitle">Profile Scrape</h2>
+            <p data-i18n="profileSub">Use this for account data, video metrics, covers, and video files.</p>
+          </div>
+          <button type="submit" class="primary" data-i18n="runScrape">Start Scrape</button>
+        </div>
+
+        <div class="grid two">
+          <label class="field">
+            <span data-i18n="profileUrl">TikTok profile URL</span>
+            <input name="profileUrl" type="url" placeholder="https://www.tiktok.com/..." required />
+          </label>
+
+          <label class="field">
+            <span data-i18n="maxVideos">Max videos</span>
+            <input name="maxVideos" type="number" min="1" max="200" value="30" />
+          </label>
+        </div>
+
+        <div class="grid two">
+          <fieldset class="group">
+            <legend data-i18n="timeRange">Video time range</legend>
+            <label><input type="radio" name="timeRange" value="7" /> <span data-i18n="last7">Last 7 days</span></label>
+            <label><input type="radio" name="timeRange" value="30" checked /> <span data-i18n="last30">Last 30 days</span></label>
+            <label><input type="radio" name="timeRange" value="60" /> <span data-i18n="last60">Last 60 days</span></label>
+            <label><input type="radio" name="timeRange" value="all" /> <span data-i18n="allTime">All time</span></label>
+            <label class="inline-custom">
+              <input type="radio" name="timeRange" value="custom" />
+              <span data-i18n="customDays">Custom days</span>
+              <input name="customDays" type="number" min="1" max="3650" value="14" />
+            </label>
+          </fieldset>
+
+          <fieldset class="group download-group">
+            <legend data-i18n="downloadOptions">Local files to save</legend>
+            <div class="option-row">
+              <span class="option-title" data-i18n="fileTypes">File types</span>
+              <label><input type="checkbox" name="downloadVideos" checked /> <span data-i18n="downloadVideos">Video MP4</span></label>
+              <label><input type="checkbox" name="downloadCovers" checked /> <span data-i18n="downloadCovers">Cover JPG/PNG</span></label>
+            </div>
+            <div class="option-row version-row">
+              <span class="option-title" data-i18n="videoVersion">Video version</span>
+              <label><input type="radio" name="mediaMode" value="watermark" checked /> <span data-i18n="watermark">Watermarked</span></label>
+              <label><input type="radio" name="mediaMode" value="no-watermark" /> <span data-i18n="noWatermark">Prefer no-watermark</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <fieldset class="group fields">
+          <legend data-i18n="fieldSelect">Custom fields</legend>
+          <label><input type="checkbox" name="fields" value="account" checked /> <span data-i18n="fieldAccount">Account data</span></label>
+          <label><input type="checkbox" name="fields" value="videoData" checked /> <span data-i18n="fieldVideoData">Video data</span></label>
+          <label><input type="checkbox" name="fields" value="title" checked /> <span data-i18n="fieldTitle">Video title</span></label>
+          <label><input type="checkbox" name="fields" value="createTime" checked /> <span data-i18n="fieldCreateTime">Publish time</span></label>
+          <label><input type="checkbox" name="fields" value="playCount" checked /> <span data-i18n="fieldPlay">Play count</span></label>
+          <label><input type="checkbox" name="fields" value="likeCount" checked /> <span data-i18n="fieldLike">Like count</span></label>
+          <label><input type="checkbox" name="fields" value="commentCount" checked /> <span data-i18n="fieldComment">Comment count</span></label>
+          <label><input type="checkbox" name="fields" value="shareCount" checked /> <span data-i18n="fieldShare">Share count</span></label>
+          <label><input type="checkbox" name="fields" value="collectCount" checked /> <span data-i18n="fieldCollect">Collect count</span></label>
+          <label><input type="checkbox" name="fields" value="cover" checked /> <span data-i18n="fieldCover">Cover</span></label>
+          <label><input type="checkbox" name="fields" value="videoUrl" checked /> <span data-i18n="fieldVideoUrl">Video download source</span></label>
+        </fieldset>
+      </form>
+
+      <form id="singleForm" class="panel compact">
+        <div class="section-head">
+          <div>
+            <h2 data-i18n="singleTitle">Single Video Download</h2>
+            <p data-i18n="singleSub">Paste one TikTok video URL and choose whether to save cover, metadata, and video file.</p>
+          </div>
+          <button type="submit" class="secondary" data-i18n="downloadSingle">Download Single Video</button>
+        </div>
+        <div class="grid two">
+          <label class="field">
+            <span data-i18n="singleUrl">Single video URL</span>
+            <input name="videoUrl" type="url" placeholder="https://www.tiktok.com/..." required />
+          </label>
+          <fieldset class="group single-options">
+            <legend data-i18n="singleOptions">Single video options</legend>
+            <div class="option-row">
+              <span class="option-title" data-i18n="fileTypes">File types</span>
+              <label><input type="checkbox" name="singleVideoData" checked /> <span data-i18n="singleVideoData">Video data JSON</span></label>
+              <label><input type="checkbox" name="singleDownloadVideo" checked /> <span data-i18n="singleDownloadVideo">Video MP4</span></label>
+              <label><input type="checkbox" name="singleDownloadCover" checked /> <span data-i18n="singleDownloadCover">Cover JPG/PNG</span></label>
+            </div>
+            <div class="option-row version-row">
+              <span class="option-title" data-i18n="videoVersion">Video version</span>
+              <label><input type="radio" name="singleMediaMode" value="no-watermark" checked /> <span data-i18n="noWatermark">Prefer no-watermark</span></label>
+              <label><input type="radio" name="singleMediaMode" value="watermark" /> <span data-i18n="watermark">Watermarked</span></label>
+            </div>
+          </fieldset>
+        </div>
+      </form>
+
+      <form id="batchForm" class="panel compact">
+        <div class="section-head">
+          <div>
+            <h2 data-i18n="batchTitle">Batch Video Download</h2>
+            <p data-i18n="batchSub">Paste multiple TikTok video URLs, one per line. The options below apply to every video.</p>
+          </div>
+          <button type="submit" class="secondary" data-i18n="downloadBatch">Download Batch</button>
+        </div>
+        <div class="grid two">
+          <label class="field">
+            <span data-i18n="batchUrls">Batch video URLs</span>
+            <textarea name="videoUrls" placeholder="https://www.tiktok.com/..."></textarea>
+          </label>
+          <fieldset class="group single-options">
+            <legend data-i18n="batchOptions">Batch download options</legend>
+            <div class="option-row">
+              <span class="option-title" data-i18n="fileTypes">File types</span>
+              <label><input type="checkbox" name="batchVideoData" checked /> <span data-i18n="singleVideoData">Video data JSON</span></label>
+              <label><input type="checkbox" name="batchDownloadVideo" checked /> <span data-i18n="singleDownloadVideo">Video MP4</span></label>
+              <label><input type="checkbox" name="batchDownloadCover" checked /> <span data-i18n="singleDownloadCover">Cover JPG/PNG</span></label>
+            </div>
+            <div class="option-row version-row">
+              <span class="option-title" data-i18n="videoVersion">Video version</span>
+              <label><input type="radio" name="batchMediaMode" value="no-watermark" checked /> <span data-i18n="noWatermark">Prefer no-watermark</span></label>
+              <label><input type="radio" name="batchMediaMode" value="watermark" /> <span data-i18n="watermark">Watermarked</span></label>
+            </div>
+          </fieldset>
+        </div>
+      </form>
+
+      <section class="output">
+        <div class="section-head">
+          <div>
+            <h2 data-i18n="resultTitle">Execution Result</h2>
+            <p id="statusText" data-i18n="idle">Waiting for a task.</p>
+          </div>
+          <div class="action-row">
+            <button id="pauseTask" type="button" class="ghost" data-i18n="pauseTask" disabled>Pause</button>
+            <button id="stopTask" type="button" class="ghost danger-ghost" data-i18n="stopTask" disabled>End</button>
+            <button id="copyResult" type="button" class="ghost" data-i18n="copy">Copy Result</button>
+          </div>
+        </div>
+        <div class="result-layout">
+          <div class="progress-card">
+            <h3 data-i18n="progressTitle">Task Progress</h3>
+            <ol id="progressList" class="progress-list"></ol>
+          </div>
+          <div class="json-card">
+            <h3 data-i18n="jsonTitle">Clean Result</h3>
+            <pre id="resultBox">{}</pre>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

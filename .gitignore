@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+data/
+downloads/
+*.log
+*.part
+.DS_Store
+Thumbs.db
+playwright-report/
+test-results/
