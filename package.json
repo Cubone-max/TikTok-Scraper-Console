@@ -1,10 +1,31 @@
 {
-  "name": "tiktok-scraper-console",
+  "name": "@cubone-max/tiktok-scraper-console",
   "version": "0.1.0",
   "description": "TikTok account data scraper powered by Playwright headless browser and optional proxies.",
   "type": "module",
+  "author": "Cubone-max <hackhacksay886@gmail.com>",
   "bin": {
     "tiktok-scraper-console": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "public",
+    "docs",
+    "README.md",
+    "README.zh-Hant.md",
+    "LICENSE",
+    ".env.example"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cubone-max/TikTok-Scraper-Console.git"
+  },
+  "homepage": "https://github.com/Cubone-max/TikTok-Scraper-Console#readme",
+  "bugs": {
+    "url": "https://github.com/Cubone-max/TikTok-Scraper-Console/issues"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -19,7 +40,6 @@
     "playwright",
     "proxy"
   ],
-  "author": "",
   "license": "MIT",
   "engines": {
     "node": ">=20"
