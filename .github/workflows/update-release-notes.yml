@@ -1,0 +1,25 @@
+name: Update Release Notes
+
+on:
+  push:
+    paths:
+      - ".github/release-notes/v0.1.0.md"
+      - ".github/workflows/update-release-notes.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    name: Update v0.1.0 release notes
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release edit v0.1.0 --notes-file .github/release-notes/v0.1.0.md
