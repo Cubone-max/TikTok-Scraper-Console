@@ -19,11 +19,13 @@ English | [繁體中文](README.zh-Hant.md)
 
 <div align="center">
   <a href="https://www.ipcook.com/?ref=IKGXS6">
-    <img src="docs/sponsor-banner-placeholder.svg" alt="Sponsored by IPCook banner placeholder" />
+    <img src="docs/ipcook-sponsor-banner.jpg" alt="Sponsored by IPCook" />
   </a>
 </div>
 
-This project reserves the sponsor slot for IPCook. You can use an IPCook proxy API link in the web console when TikTok access needs a proxy route.
+Scale your TikTok scraping with IPcook's 55M+ premium residential proxies. With premium proxy quality, IPcook helps you bypass rate limits and ban risks via smart auto-rotation.
+
+Starting at just $2 to $3.2/G, IPcook provides one of the most competitive prices on the market. It now offers a 100 MB free trial, so don't miss out.
 
 ## ✨ What Is This?
 

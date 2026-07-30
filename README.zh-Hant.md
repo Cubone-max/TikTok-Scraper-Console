@@ -19,11 +19,13 @@
 
 <div align="center">
   <a href="https://www.ipcook.com/?ref=IKGXS6">
-    <img src="docs/sponsor-banner-placeholder.svg" alt="IPCook 贊助 banner 預留位置" />
+    <img src="docs/ipcook-sponsor-banner.jpg" alt="IPCook 贊助 banner" />
   </a>
 </div>
 
-本專案贊助欄預留給 IPCook。當 TikTok 訪問需要代理出口時，可在網頁控制台填入 IPCook 代理 API 連結。
+使用 IPcook 的 55M+ 高品質住宅代理，讓你的 TikTok 資料擷取更容易擴展。IPcook 透過高品質代理與智慧自動輪換，協助降低請求限制與封鎖風險。
+
+IPcook 價格從 $2 到 $3.2/G 起，提供具競爭力的代理方案，並提供 100 MB 免費試用。
 
 ## ✨ 這是什麼？
 
