@@ -19,7 +19,7 @@ English | [繁體中文](README.zh-Hant.md)
 
 <div align="center">
   <a href="https://www.ipcook.com/?ref=IKGXS6">
-    <img src="docs/ipcook-sponsor-banner.jpg" alt="Sponsored by IPCook" />
+    <img src="docs/ipcook-sponsor-banner.png" alt="Sponsored by IPCook" />
   </a>
 </div>
 
