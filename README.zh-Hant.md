@@ -19,7 +19,7 @@
 
 <div align="center">
   <a href="https://www.ipcook.com/?ref=IKGXS6">
-    <img src="docs/ipcook-sponsor-banner.jpg" alt="IPCook 贊助 banner" />
+    <img src="docs/ipcook-sponsor-banner.png" alt="IPCook 贊助 banner" />
   </a>
 </div>
 
