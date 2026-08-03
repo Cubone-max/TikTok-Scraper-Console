@@ -54,7 +54,6 @@ Use the execution result panel to follow each scrape step, review errors, pause 
 ### Scraped Data Output
 
 ![Scraped data example](docs/screenshots/scraped-data-example.png)
-![Download](docs/screenshots/download.png)
 
 ### Downloaded Media Output
 
