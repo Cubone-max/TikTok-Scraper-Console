@@ -54,7 +54,6 @@ IPcook 價格從 $2 到 $3.2/G 起，提供具競爭力的代理方案，並提�
 ### 擷取資料輸出
 
 ![擷取資料輸出範例](docs/screenshots/scraped-data-example.png)
-![視頻下載](docs/screenshots/download.png)
 
 ### 下載媒體輸出
 
