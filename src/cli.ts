@@ -27,6 +27,7 @@ async function main(): Promise<void> {
     taskBatchSize: intArg(args["task-batch-size"], 20),
     taskRetries: intArg(args["task-retries"], 2),
     mediaMode: args["no-watermark"] === true ? "no-watermark" : "watermark",
+    trafficMode: args["data-saving"] === true ? "data-saving" : "stable",
     proxy: directProxy
   };
 
@@ -78,6 +79,7 @@ Options:
   --scroll-times <number>        Profile scroll count before extraction
   --download                     Download video files and covers when URLs are available
   --no-watermark                 Prefer likely no-watermark play sources when downloading
+  --data-saving                  Block non-essential image/media/font requests when metadata-only
   --download-concurrency <num>   Parallel media downloads, default 2
   --task-batch-size <num>        Split large video work into batches, default 20
   --task-retries <num>           Retry failed batches/videos, default 2

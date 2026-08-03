@@ -114,6 +114,7 @@ async function scrapeTikTokProfileAttempt(options: ScrapeOptions): Promise<Scrap
   if (options.proxy) contextOptions.proxy = options.proxy;
 
   const context = await browser.newContext(contextOptions);
+  await configureTrafficSaving(context, options);
   const page = await context.newPage();
   const intercepted: InterceptedData = { account: {}, videos: [] };
   attachTikTokResponseCollector(page, intercepted, options.mediaMode);
@@ -125,16 +126,25 @@ async function scrapeTikTokProfileAttempt(options: ScrapeOptions): Promise<Scrap
     await page.waitForTimeout(4000);
     await taskCheckpoint(options);
 
+    let previousKnownVideoCount = await countKnownVideos(page, intercepted);
+    let unchangedScrolls = 0;
     for (let i = 0; i < options.scrollTimes; i += 1) {
       await taskCheckpoint(options);
       if (taskShouldStop(options)) break;
       await page.mouse.wheel(0, 1500);
       await page.waitForTimeout(4000);
+      const knownVideoCount = await countKnownVideos(page, intercepted);
+      const targetVideoCount = effectiveTargetVideoCount(options, intercepted.account);
+      unchangedScrolls = knownVideoCount > previousKnownVideoCount ? 0 : unchangedScrolls + 1;
       emitProgress(options, "scroll_profile", "Loading more videos", {
         current: i + 1,
         total: options.scrollTimes,
-        count: await countKnownVideos(page, intercepted)
+        count: knownVideoCount,
+        target: targetVideoCount
       });
+      if (knownVideoCount >= targetVideoCount) break;
+      if (unchangedScrolls >= 2 && knownVideoCount > 0) break;
+      previousKnownVideoCount = knownVideoCount;
     }
 
     await taskCheckpoint(options);
@@ -158,7 +168,7 @@ async function scrapeTikTokProfileAttempt(options: ScrapeOptions): Promise<Scrap
     }
 
     emitProgress(options, filteredVideos.length ? "videos_found" : "no_videos_found", filteredVideos.length ? "Videos found" : "No videos found", { count: filteredVideos.length }, filteredVideos.length ? "success" : "warning");
-    if (filteredVideos.length > 0 && !taskShouldStop(options)) {
+    if (shouldVerifyVideoUrls(options) && filteredVideos.length > 0 && !taskShouldStop(options)) {
       await taskCheckpoint(options);
       emitProgress(options, "verify_video_urls", "Verifying video download sources", { count: filteredVideos.length });
       await runVideoBatches(options, filteredVideos, "verify", async (batch) => {
@@ -216,6 +226,7 @@ async function downloadTikTokSingleVideoAttempt(options: ScrapeOptions & { video
   if (options.proxy) contextOptions.proxy = options.proxy;
 
   const context = await browser.newContext(contextOptions);
+  await configureTrafficSaving(context, options);
   const page = await context.newPage();
   const intercepted: InterceptedData = { account: {}, videos: [] };
   attachTikTokResponseCollector(page, intercepted, options.mediaMode);
@@ -225,8 +236,10 @@ async function downloadTikTokSingleVideoAttempt(options: ScrapeOptions & { video
     await taskCheckpoint(options);
     emitProgress(options, "parse_video", "Parsing video data");
     const { username, videos: finalVideos } = await collectSingleVideo(page, intercepted, options.videoUrl, options);
-    emitProgress(options, "verify_video_urls", "Verifying video download sources");
-    await refreshVideoUrls(page, finalVideos, options);
+    if (shouldVerifyVideoUrls(options)) {
+      emitProgress(options, "verify_video_urls", "Verifying video download sources");
+      await refreshVideoUrls(page, finalVideos, options);
+    }
 
     const scrapedAt = new Date().toISOString();
     const outputName = username || finalVideos[0]?.id || "single-video";
@@ -282,6 +295,7 @@ async function downloadTikTokBatchVideosAttempt(options: ScrapeOptions & { video
   if (options.proxy) contextOptions.proxy = options.proxy;
 
   const context = await browser.newContext(contextOptions);
+  await configureTrafficSaving(context, options);
 
   try {
     emitProgress(options, "batch_links_found", "Batch video links received", { count: options.videoUrls.length });
@@ -373,8 +387,10 @@ async function collectSingleVideoWithRetry(
       emitProgress(options, "open_video", "Opening TikTok video", { current, total, url: videoUrl, attempt, attempts });
       emitProgress(options, "parse_video", "Parsing video data", { current, total, attempt, attempts });
       const { videos } = await collectSingleVideo(page, intercepted, videoUrl, options);
-      emitProgress(options, "verify_video_urls", "Verifying video download sources", { current, total, attempt, attempts });
-      await refreshVideoUrls(page, videos, options);
+      if (shouldVerifyVideoUrls(options)) {
+        emitProgress(options, "verify_video_urls", "Verifying video download sources", { current, total, attempt, attempts });
+        await refreshVideoUrls(page, videos, options);
+      }
       return videos;
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error);
@@ -1024,6 +1040,37 @@ function countDownloadableMedia(result: ScrapeResult, options: Pick<ScrapeOption
     const videoCount = video.videoUrl && options.downloadVideos !== false ? 1 : 0;
     return total + coverCount + videoCount;
   }, 0);
+}
+
+function shouldVerifyVideoUrls(options: Pick<ScrapeOptions, "downloadMedia" | "downloadVideos">): boolean {
+  return options.downloadMedia && options.downloadVideos !== false;
+}
+
+async function configureTrafficSaving(context: BrowserContext, options: ScrapeOptions): Promise<void> {
+  if (!shouldBlockNonEssentialResources(options)) return;
+
+  const blockedResourceTypes = new Set(["image", "media", "font"]);
+  await context.route("**/*", async (route) => {
+    if (blockedResourceTypes.has(route.request().resourceType())) {
+      await route.abort();
+      return;
+    }
+    await route.continue();
+  });
+
+  emitProgress(options, "traffic_saving_enabled", "Data-saving mode enabled");
+}
+
+function shouldBlockNonEssentialResources(options: Pick<ScrapeOptions, "downloadMedia" | "trafficMode">): boolean {
+  return options.trafficMode === "data-saving" && !options.downloadMedia;
+}
+
+function effectiveTargetVideoCount(options: Pick<ScrapeOptions, "maxVideos">, account: Partial<AccountProfile>): number {
+  const accountVideoCount = account.videoCount;
+  if (accountVideoCount !== undefined && accountVideoCount >= 0) {
+    return Math.min(options.maxVideos, accountVideoCount);
+  }
+  return options.maxVideos;
 }
 
 function hasAccountData(account: AccountProfile): boolean {

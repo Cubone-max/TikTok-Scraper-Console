@@ -19,7 +19,7 @@
 
 <div align="center">
   <a href="https://www.ipcook.com/?ref=IKGXS6">
-    <img src="docs/ipcook-sponsor-banner.jpg" alt="IPCook 贊助 banner" />
+    <img src="docs/ipcook-sponsor-banner.png" alt="IPCook 贊助 banner" />
   </a>
 </div>
 
@@ -55,6 +55,12 @@ IPcook 價格從 $2 到 $3.2/G 起，提供具競爭力的代理方案，並提�
 
 ![擷取資料輸出範例](docs/screenshots/scraped-data-example.png)
 
+### 下載媒體輸出
+
+擷取完成後，勾選保存的影片與封面會輸出到本次任務資料夾。
+
+![下載後的影片與封面檔案](docs/screenshots/download.png)
+
 ### IPCook 代理 API 連結頁
 
 [![IPCook API 連結頁](docs/screenshots/ipcook-api-page.png)](https://www.ipcook.com/?ref=IKGXS6)
@@ -69,6 +75,7 @@ IPcook 價格從 $2 到 $3.2/G 起，提供具競爭力的代理方案，並提�
 | 🧾 批量代理識別 | 可貼上常見代理格式，工具會自動轉換為可用配置 |
 | 🧭 出口 IP 檢測 | 顯示目前出口 IP 與國家代碼，例如 `ip: 1.2.3.4 US` |
 | 👤 主頁資料擷取 | 擷取帳號名稱、暱稱、粉絲數、簡介、影片列表等 |
+| 🚦 主頁資料流量模式 | 穩定模式保留完整頁面載入；省流模式僅在不下載影片與封面時適用 |
 | 🎬 影片資料擷取 | 擷取發布時間、播放量、點讚數、評論數、分享數、收藏數、標題等 |
 | 🖼️ 封面下載 | 封面保存為 `jpg` 或 `png` 圖片格式 |
 | 📥 影片下載 | 支援帶水印版本與優先無水印版本 |
@@ -81,6 +88,17 @@ IPcook 價格從 $2 到 $3.2/G 起，提供具競爭力的代理方案，並提�
 | 🛑 跑完目前影片後結束 | 可要求任務在目前影片處理完成後保存結果並結束 |
 | ♻️ 失敗重試 | 大任務自動拆批，失敗後重試，仍失敗則跳過並繼續 |
 | 📝 失敗清單 | 失敗影片會整理到 `failed-videos.txt`，方便再次批量下載 |
+
+## 🆕 最近更新
+
+- 已將 IPCook 贊助 banner 更新為最新 PNG 圖片。
+- 新增下載媒體輸出截圖，方便確認成功擷取後本機保存的 MP4 影片與封面檔案。
+- 新增僅適用於主頁元資料擷取的流量模式：
+  - `穩定模式`：保留原本完整頁面載入方式，兼容性較高。
+  - `省流模式`：只有在不下載影片與封面時可用；擷取元資料時會阻擋非必要的圖片、媒體與字型請求，以降低代理流量。
+- 優化主頁滾動邏輯。當已取得使用者指定的影片數量時，不再固定跑滿所有滾動輪數；若帳號實際發布影片少於使用者設定數量，也會在沒有更多影片時提前停止。
+- 只擷取元資料時不再驗證影片下載源，避免在不下載影片的情況下產生額外請求。
+- 重新整理網頁介面的間距與對齊，包括主頁擷取控制、流量模式位置、輸入框文字位置，以及單條影片 URL 輸入框高度。
 
 ## 🖥️ 運行環境
 
@@ -197,6 +215,7 @@ https://www.tiktok.com/@<username>
 - 是否保存封面 JPG/PNG
 - 帶水印或優先無水印
 - 需要輸出的資料欄位
+- 資料流量模式：`穩定模式` 保留正常頁面載入；`省流模式` 僅用於主頁元資料擷取，會阻擋非必要資源以降低代理流量
 
 任務執行時，執行結果區會顯示即時進度。`暫停` 會在下一個安全節點暫停，`繼續` 會恢復任務，`結束` 會在目前影片處理完成後保存目前結果並停止。
 
@@ -230,6 +249,12 @@ https://www.tiktok.com/@<username>/video/<video_id>
 npm run scrape -- --url "<profile-url>" --max-videos 30
 ```
 
+以較低代理流量擷取資料：
+
+```bash
+npm run scrape -- --url "<profile-url>" --max-videos 100 --data-saving
+```
+
 下載影片與封面：
 
 ```bash
@@ -261,9 +286,10 @@ npm run scrape -- --url "<profile-url>" --download --max-videos 100 --task-batch
 | `--username <name>` | TikTok 使用者名稱，可不帶 `@` |
 | `--url <url>` | TikTok 主頁連結 |
 | `--max-videos <number>` | 最大影片數 |
-| `--scroll-times <number>` | 主頁滾動載入次數 |
+| `--scroll-times <number>` | 主頁最大滾動輪數；取得足夠影片或沒有更多影片時會提前停止 |
 | `--download` | 下載影片與封面 |
 | `--no-watermark` | 優先使用疑似無水印影片來源 |
+| `--data-saving` | 只抓資料時阻擋圖片、媒體與字型請求 |
 | `--download-concurrency <num>` | 媒體下載並發數 |
 | `--task-batch-size <num>` | 大任務分批大小，預設 `20` |
 | `--task-retries <num>` | 批次或影片失敗後重試次數，預設 `2` |

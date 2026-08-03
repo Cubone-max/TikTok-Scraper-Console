@@ -1,6 +1,6 @@
 {
   "name": "@cubone-max/tiktok-scraper-console",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "TikTok account data scraper powered by Playwright headless browser and optional proxies.",
   "type": "module",
   "author": "Cubone-max <hackhacksay886@gmail.com>",

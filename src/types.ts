@@ -89,6 +89,7 @@ export type ScrapeOptions = {
   taskBatchSize: number;
   taskRetries: number;
   mediaMode: "watermark" | "no-watermark";
+  trafficMode?: "stable" | "data-saving";
   sinceDays?: number;
   proxy?: ProxyConfig;
   proxyPool?: ProxyConfig[];

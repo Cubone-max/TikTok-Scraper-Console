@@ -24,6 +24,10 @@ const i18n = {
     proxyListPlaceholder: "HOST:PORT:USER:PASS\nHOST:PORT@USER:PASS\nUSER:PASS:HOST:PORT\nUSER:PASS@HOST:PORT",
     ipcookUrl: "IPCook API 連結（僅 IPCook API 模式使用）",
     proxyList: "IPCook 代理列表（自動識別格式，打開失敗會自動切換）",
+    metadataTrafficMode: "資料流量模式",
+    stableMode: "穩定模式",
+    dataSavingMode: "省流模式",
+    dataSavingNote: "僅適用於不下載影片與封面的主頁元資料擷取；關閉媒體保存後可減少代理流量。",
     timeRange: "影片時間範圍",
     last7: "近 1 週",
     last30: "近 30 天",
@@ -81,6 +85,7 @@ const i18n = {
       task_resumed: "任務已繼續",
       proxy_start: "正在準備連線方式",
       proxy_ready: "連線方式已就緒",
+      traffic_saving_enabled: "省流模式已啟用",
       proxy_using: "正在使用代理",
       proxy_switch: "頁面打開失敗，正在切換代理",
       launch_browser: "正在啟動瀏覽器",
@@ -153,6 +158,10 @@ const i18n = {
     ipcookPlaceholder: "https://www.ipcook.com/api/dynamic/genips?...",
     proxyList: "IPCook proxy list (auto-detect format, switch on open failure)",
     proxyListPlaceholder: "HOST:PORT:USER:PASS\nHOST:PORT@USER:PASS\nUSER:PASS:HOST:PORT\nUSER:PASS@HOST:PORT",
+    metadataTrafficMode: "Metadata traffic mode",
+    stableMode: "Stable mode",
+    dataSavingMode: "Data-saving mode",
+    dataSavingNote: "Only available for metadata-only profile scraping. Turn off video and cover downloads to reduce proxy traffic.",
     timeRange: "Video time range",
     last7: "Last 7 days",
     last30: "Last 30 days",
@@ -210,6 +219,7 @@ const i18n = {
       task_resumed: "Task resumed",
       proxy_start: "Preparing connection",
       proxy_ready: "Connection ready",
+      traffic_saving_enabled: "Data-saving mode enabled",
       proxy_using: "Using proxy",
       proxy_switch: "Page open failed, switching proxy",
       launch_browser: "Launching browser",
@@ -312,6 +322,10 @@ connectionForm.querySelectorAll("input[name=proxyMode]").forEach((input) => {
   input.addEventListener("change", updateConnectionFields);
 });
 
+profileForm.querySelectorAll("input[name=downloadVideos], input[name=downloadCovers]").forEach((input) => {
+  input.addEventListener("change", syncProfileTrafficMode);
+});
+
 document.querySelector("#copyResult").addEventListener("click", async () => {
   await navigator.clipboard.writeText(resultBox.textContent || "{}");
   statusText.textContent = i18n[language].copied;
@@ -375,6 +389,8 @@ function payloadFromProfileForm() {
   const data = new FormData(profileForm);
   const downloadVideos = data.get("downloadVideos") === "on";
   const downloadCovers = data.get("downloadCovers") === "on";
+  const selectedTrafficMode = data.get("trafficMode");
+  const isMetadataOnly = !downloadVideos && !downloadCovers;
   return {
     ...connectionPayload(),
     profileUrl: data.get("profileUrl"),
@@ -385,6 +401,7 @@ function payloadFromProfileForm() {
     downloadVideos,
     downloadCovers,
     mediaMode: data.get("mediaMode"),
+    trafficMode: isMetadataOnly && selectedTrafficMode === "data-saving" ? "data-saving" : "stable",
     fields: data.getAll("fields")
   };
 }
@@ -452,6 +469,16 @@ function updateConnectionFields() {
   }
   ipStatus.className = "ip-status";
   ipStatus.textContent = i18n[language].ipIdle;
+}
+
+function syncProfileTrafficMode() {
+  const downloadVideos = profileForm.querySelector("input[name=downloadVideos]").checked;
+  const downloadCovers = profileForm.querySelector("input[name=downloadCovers]").checked;
+  const dataSaving = profileForm.querySelector("input[name=trafficMode][value='data-saving']");
+  const stable = profileForm.querySelector("input[name=trafficMode][value='stable']");
+  const canSaveTraffic = !downloadVideos && !downloadCovers;
+  dataSaving.disabled = !canSaveTraffic;
+  if (!canSaveTraffic) stable.checked = true;
 }
 
 function parseVideoUrls(text) {
@@ -701,4 +728,5 @@ function setBusy(isBusy) {
 
 applyLanguage();
 updateConnectionFields();
+syncProfileTrafficMode();
 renderProgress([]);

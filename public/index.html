@@ -77,7 +77,7 @@
           </label>
         </div>
 
-        <div class="grid two">
+        <div class="grid profile-options">
           <fieldset class="group">
             <legend data-i18n="timeRange">Video time range</legend>
             <label><input type="radio" name="timeRange" value="7" /> <span data-i18n="last7">Last 7 days</span></label>
@@ -91,19 +91,28 @@
             </label>
           </fieldset>
 
-          <fieldset class="group download-group">
-            <legend data-i18n="downloadOptions">Local files to save</legend>
-            <div class="option-row">
-              <span class="option-title" data-i18n="fileTypes">File types</span>
-              <label><input type="checkbox" name="downloadVideos" checked /> <span data-i18n="downloadVideos">Video MP4</span></label>
-              <label><input type="checkbox" name="downloadCovers" checked /> <span data-i18n="downloadCovers">Cover JPG/PNG</span></label>
-            </div>
-            <div class="option-row version-row">
-              <span class="option-title" data-i18n="videoVersion">Video version</span>
-              <label><input type="radio" name="mediaMode" value="watermark" checked /> <span data-i18n="watermark">Watermarked</span></label>
-              <label><input type="radio" name="mediaMode" value="no-watermark" /> <span data-i18n="noWatermark">Prefer no-watermark</span></label>
-            </div>
-          </fieldset>
+          <div class="option-stack">
+            <fieldset class="group download-group">
+              <legend data-i18n="downloadOptions">Local files to save</legend>
+              <div class="option-row">
+                <span class="option-title" data-i18n="fileTypes">File types</span>
+                <label><input type="checkbox" name="downloadVideos" checked /> <span data-i18n="downloadVideos">Video MP4</span></label>
+                <label><input type="checkbox" name="downloadCovers" checked /> <span data-i18n="downloadCovers">Cover JPG/PNG</span></label>
+              </div>
+              <div class="option-row version-row">
+                <span class="option-title" data-i18n="videoVersion">Video version</span>
+                <label><input type="radio" name="mediaMode" value="watermark" checked /> <span data-i18n="watermark">Watermarked</span></label>
+                <label><input type="radio" name="mediaMode" value="no-watermark" /> <span data-i18n="noWatermark">Prefer no-watermark</span></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="group traffic-group">
+              <legend data-i18n="metadataTrafficMode">Metadata traffic mode</legend>
+              <label><input type="radio" name="trafficMode" value="stable" checked /> <span data-i18n="stableMode">Stable mode</span></label>
+              <label><input type="radio" name="trafficMode" value="data-saving" /> <span data-i18n="dataSavingMode">Data-saving mode</span></label>
+              <p class="option-note" data-i18n="dataSavingNote">Only available for metadata-only profile scraping. Turn off video and cover downloads to reduce proxy traffic.</p>
+            </fieldset>
+          </div>
         </div>
 
         <fieldset class="group fields">
@@ -131,7 +140,7 @@
           <button type="submit" class="secondary" data-i18n="downloadSingle">Download Single Video</button>
         </div>
         <div class="grid two">
-          <label class="field">
+          <label class="field single-url-field">
             <span data-i18n="singleUrl">Single video URL</span>
             <input name="videoUrl" type="url" placeholder="https://www.tiktok.com/..." required />
           </label>

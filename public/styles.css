@@ -15,8 +15,8 @@
   --warning: #a15c07;
   --space-xs: 6px;
   --space-sm: 10px;
-  --space-md: 14px;
-  --space-lg: 18px;
+  --space-md: 16px;
+  --space-lg: 20px;
   --space-xl: 24px;
 }
 
@@ -134,6 +134,7 @@ h3 {
   background: var(--soft);
   color: #23423f;
   font-size: 14px;
+  line-height: 1.45;
 }
 
 .status-dot {
@@ -149,12 +150,12 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
-  padding: 20px;
+  padding: var(--space-xl);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .compact {
-  padding-top: 20px;
+  padding-top: var(--space-xl);
 }
 
 .section-head {
@@ -193,9 +194,20 @@ h3 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.grid.profile-options {
+  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.9fr);
+  align-items: stretch;
+}
+
+.option-stack {
+  display: grid;
+  gap: var(--space-md);
+  min-width: 0;
+}
+
 .field {
   display: grid;
-  gap: 7px;
+  gap: 8px;
   color: var(--muted);
   font-size: 13px;
   font-weight: 700;
@@ -217,12 +229,29 @@ input[type="number"],
 textarea,
 select {
   width: 100%;
-  min-height: 42px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 9px 12px;
   color: var(--text);
   background: #fff;
+  line-height: 1.45;
+}
+
+input[type="url"],
+input[type="number"],
+select {
+  height: 42px;
+  padding: 0 12px;
+  line-height: 42px;
+}
+
+input[type="number"] {
+  appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
 }
 
 input:disabled,
@@ -243,6 +272,7 @@ select:focus {
 
 textarea {
   min-height: 132px;
+  padding: 10px 12px;
   resize: vertical;
   line-height: 1.5;
 }
@@ -296,13 +326,14 @@ textarea {
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
-  gap: var(--space-sm) var(--space-md);
-  min-height: 94px;
+  gap: 10px var(--space-md);
+  min-height: 0;
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 12px;
+  padding: 14px;
   background: #fbfcfd;
   margin: 0;
+  min-width: 0;
 }
 
 .group legend {
@@ -316,52 +347,97 @@ textarea {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  min-height: 30px;
+  min-height: 28px;
   color: var(--text);
   font-size: 14px;
+  line-height: 1.45;
 }
 
 .download-group,
-.single-options {
+.single-options,
+.traffic-group {
   display: grid;
-  gap: var(--space-sm);
+  align-content: start;
+  gap: 12px;
+}
+
+.single-url-field {
+  position: relative;
+  display: block;
+}
+
+.single-url-field input {
+  display: block;
+  height: 100%;
+  min-height: 42px;
+  line-height: normal;
+}
+
+.single-url-field > span {
+  position: absolute;
+  z-index: 1;
+  top: -7px;
+  left: 14px;
+  width: auto;
+  padding: 0 6px;
+  background: var(--panel);
 }
 
 .option-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px var(--space-md);
+  gap: 8px 18px;
   width: 100%;
+  min-width: 0;
 }
 
 .option-title {
-  min-width: 70px;
+  flex: 0 0 104px;
   color: var(--muted);
   font-size: 13px;
   font-weight: 800;
+  line-height: 1.45;
 }
 
 .version-row {
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .version-row label {
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .fields {
   min-height: unset;
 }
 
-.single-options {
-  min-height: unset;
+.traffic-group label {
+  width: auto;
+  min-width: 150px;
+}
+
+.option-note {
+  width: 100%;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--primary);
+}
+
+.group input:disabled + span {
+  color: #8a97a8;
 }
 
 .inline-custom input[type="number"] {
   width: 86px;
-  min-height: 32px;
-  padding: 5px 8px;
+  height: 34px;
+  padding: 0 10px;
+  line-height: 34px;
 }
 
 .primary,
@@ -521,6 +597,10 @@ pre {
   }
 
   .grid.two {
+    grid-template-columns: 1fr;
+  }
+
+  .grid.profile-options {
     grid-template-columns: 1fr;
   }
 

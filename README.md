@@ -19,7 +19,7 @@ English | [繁體中文](README.zh-Hant.md)
 
 <div align="center">
   <a href="https://www.ipcook.com/?ref=IKGXS6">
-    <img src="docs/ipcook-sponsor-banner.jpg" alt="Sponsored by IPCook" />
+    <img src="docs/ipcook-sponsor-banner.png" alt="Sponsored by IPCook" />
   </a>
 </div>
 
@@ -55,6 +55,12 @@ Use the execution result panel to follow each scrape step, review errors, pause 
 
 ![Scraped data example](docs/screenshots/scraped-data-example.png)
 
+### Downloaded Media Output
+
+After scraping, selected videos and covers are saved locally under the task output folder.
+
+![Downloaded video and cover files](docs/screenshots/download.png)
+
 ### IPCook Proxy API Link Page
 
 [![IPCook API link page](docs/screenshots/ipcook-api-page.png)](https://www.ipcook.com/?ref=IKGXS6)
@@ -69,6 +75,7 @@ Use the execution result panel to follow each scrape step, review errors, pause 
 | 🧾 Proxy list parsing | Paste proxies in common formats and let the app normalize them automatically |
 | 🧭 Exit IP check | Display the current exit IP and country code, for example `ip: 1.2.3.4 US` |
 | 👤 Profile scraping | Collect username, nickname, followers, bio, and video list |
+| 🚦 Profile metadata traffic modes | Stable mode keeps full page loading; data-saving mode applies only when video and cover downloads are off |
 | 🎬 Video metadata | Collect publish time, views, likes, comments, shares, collects, title, and more |
 | 🖼️ Cover download | Save covers as `jpg` or `png` images |
 | 📥 Video download | Supports watermarked mode and best-effort no-watermark mode |
@@ -81,6 +88,17 @@ Use the execution result panel to follow each scrape step, review errors, pause 
 | 🛑 End after current video | Request a graceful stop after the current video finishes |
 | ♻️ Retryable batches | Large profile and batch jobs are split into smaller retryable batches |
 | 📝 Failed video list | Failed videos are saved to `failed-videos.txt` for later retry |
+
+## 🆕 Recent Updates
+
+- Updated the IPCook sponsor banner to the latest PNG asset.
+- Added a downloaded media screenshot so users can see the saved MP4 and cover output after a successful scrape.
+- Added profile-only metadata traffic modes:
+  - `Stable mode`: keeps the existing browser loading behavior for better compatibility.
+  - `Data-saving mode`: available only when video and cover downloads are turned off; it blocks non-essential image, media, and font requests to reduce proxy traffic during metadata scraping.
+- Optimized profile scrolling. The scraper no longer blindly uses the full configured scroll count when enough videos have already been found. If the account publishes fewer videos than the requested max count, the scraper can stop early instead of running every scroll round.
+- Metadata-only profile scraping no longer verifies video download sources, which avoids extra requests when the user only needs account and video metadata.
+- Refined the web UI spacing and alignment, including the profile scrape controls, traffic mode placement, input text alignment, and the single-video URL field height.
 
 ## 🖥️ Runtime Requirements
 
@@ -197,6 +215,7 @@ Available options:
 - Save cover JPG/PNG
 - Watermarked or prefer no-watermark
 - Custom export fields
+- Metadata traffic mode: `Stable mode` keeps normal page loading; `Data-saving mode` is only for metadata-only profile scraping and reduces proxy traffic by blocking non-essential resources
 
 During a running task, the result panel shows live progress. `Pause` holds the task at the next checkpoint, `Resume` continues it, and `End` saves the current result after the active video finishes.
 
@@ -230,6 +249,12 @@ Scrape a profile:
 npm run scrape -- --url "<profile-url>" --max-videos 30
 ```
 
+Scrape metadata with lower proxy traffic:
+
+```bash
+npm run scrape -- --url "<profile-url>" --max-videos 100 --data-saving
+```
+
 Download videos and covers:
 
 ```bash
@@ -261,9 +286,10 @@ Common options:
 | `--username <name>` | TikTok username, with or without `@` |
 | `--url <url>` | TikTok profile URL |
 | `--max-videos <number>` | Maximum video records |
-| `--scroll-times <number>` | Profile scroll count before extraction |
+| `--scroll-times <number>` | Maximum profile scroll rounds; the scraper stops early when enough videos are found or no more videos appear |
 | `--download` | Download videos and covers |
 | `--no-watermark` | Prefer likely no-watermark video sources |
+| `--data-saving` | Block image, media, and font requests during metadata-only scraping |
 | `--download-concurrency <num>` | Parallel media download count |
 | `--task-batch-size <num>` | Batch size for large jobs, default `20` |
 | `--task-retries <num>` | Retry count for failed batches or videos, default `2` |

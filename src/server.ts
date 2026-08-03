@@ -42,6 +42,7 @@ type WebRequest = {
   downloadVideos?: boolean;
   downloadCovers?: boolean;
   mediaMode?: "watermark" | "no-watermark";
+  trafficMode?: "stable" | "data-saving";
   maxVideos?: number;
   scrollTimes?: number;
 };
@@ -327,6 +328,7 @@ async function buildScrapeOptions(body: WebRequest, outputDir: string, push: Pus
     taskBatchSize: 20,
     taskRetries: 2,
     mediaMode: body.mediaMode || "watermark",
+    trafficMode: normalizeTrafficMode(body.trafficMode),
     sinceDays: parseSinceDays(body),
     proxy,
     proxyPool,
@@ -394,6 +396,10 @@ function defaultFields(): FieldKey[] {
 function normalizeProxyMode(mode: WebRequest["proxyMode"]): NonNullable<WebRequest["proxyMode"]> {
   if (mode === "ipcookApi" || mode === "ipcookProxy") return mode;
   return "local";
+}
+
+function normalizeTrafficMode(mode: WebRequest["trafficMode"]): NonNullable<WebRequest["trafficMode"]> {
+  return mode === "data-saving" ? "data-saving" : "stable";
 }
 
 function assertProxyInput(proxyMode: NonNullable<WebRequest["proxyMode"]>, body: WebRequest): void {
